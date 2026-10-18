@@ -10,7 +10,7 @@ MovieShelf is a React movie library built from the Application Development II st
 - TMDB posters with lazy loading and a fallback for missing or broken images; title, release year, and rating.
 - Shared favorites, immediate button feedback, duplicate prevention, and persistent browser storage.
 - Responsive grids, labeled search and navigation, accessible status messages, and reduced-motion support.
-- Node's built-in test runner; no additional dependencies were added.
+- Node's built-in test runner and jsdom for DOM interaction tests; no additional runtime dependencies.
 
 ## Installation and TMDB setup
 
@@ -54,11 +54,13 @@ App also owns favorites. A lazy state initializer safely reads JSON from `movies
 
 ## Validation
 
-`npm test` runs 14 deterministic tests with mocked fetch and storage, plus server-rendered component checks. These cover popular and encoded Batman requests, empty queries/results, invalid credentials, unavailable/network/malformed responses, cancellation, missing configuration, adding/removing favorites by ID, storage reload/deduplication/corruption, poster URLs/fallbacks, favorite feedback, and accessible loading/error markup.
+`npm test` runs 22 deterministic tests. Service tests mock fetch and storage; jsdom tests mount the real app with React Strict Mode and exercise typing, the 400ms debounce, trimmed queries, cancellation, stale response protection, clearing search, navigation, adding/removing favorites, persistence across an app remount, corrupt storage, failed posters, empty results, authorization errors, network errors, and retries. Server-rendered checks also cover accessible loading/error markup.
 
-Lint, tests, production build, and Vite startup were verified during implementation. No real TMDB key was available, so live API behavior and real image downloads were not verified. The tests do not simulate browser typing, effect timing, clicks, route changes, refresh, or mobile layout.
+Live TMDB verification with the locally configured key returned HTTP 200 for popular movies (20 results), Batman search (20 results), an unlikely title (zero results), and a real JPEG poster. The key was not printed or committed.
 
-Before submission, use your key and check these browser scenarios:
+Lint, all 22 tests, production build, and Vite startup were verified. DOM tests simulate a browser and an app remount checks storage reload; they do not prove visual layout or a real browser refresh. Browser control was blocked because Computer Use permissions were not granted, so desktop/mobile appearance still needs a visual check. Existing mobile breakpoints and reduced-motion CSS are preserved.
+
+For the final visual/browser check, use your configured key:
 
 1. Open Home and confirm popular movies, posters, years, and ratings.
 2. Type Batman and confirm relevant results after the debounce.
